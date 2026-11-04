@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BTC Command Center</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#0b1220;color:#e5edf8;
+ font-family:Arial,sans-serif;padding:16px
+}
+h1{color:#38bdf8;font-size:25px}
+h2{font-size:17px;color:#93c5fd}
+.card{
+ background:#172338;border:1px solid #293b55;
+ border-radius:12px;padding:15px;margin:12px 0
+}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.value{font-size:23px;font-weight:bold;margin-top:8px}
+.muted{color:#94a3b8;font-size:12px}
+.green{color:#4ade80}
+.red{color:#fb7185}
+.yellow{color:#facc15}
+.full{grid-column:1/-1}
+button{
+ background:#2563eb;color:white;border:0;
+ padding:12px;border-radius:8px;font-weight:bold
+}
+</style>
+</head>
+<body>
+
+<h1>₿ BTC COMMAND CENTER</h1>
+<p class="muted">KALSHI 15-MINUTE TRADING SYSTEM</p>
+
+<div class="card">
+<h2>MARKET STATUS</h2>
+<div class="value yellow" id="status">AWAITING LIVE DATA</div>
+<p class="muted">Live Binance connection: Not connected</p>
+<p class="muted">Kalshi connection: Not connected</p>
+</div>
+
+<div class="grid">
+<div class="card">
+<h2>BTC PRICE</h2>
+<div class="value" id="price">--</div>
+</div>
+<div class="card">
+<h2>15M COUNTDOWN</h2>
+<div class="value" id="countdown">--:--</div>
+</div>
+<div class="card">
+<h2>UP PROBABILITY</h2>
+<div class="value green" id="up">--%</div>
+</div>
+<div class="card">
+<h2>DOWN PROBABILITY</h2>
+<div class="value red" id="down">--%</div>
+</div>
+</div>
+
+<div class="card">
+<h2>REVERSAL DETECTOR</h2>
+<div class="grid">
+<div>
+<p class="muted">UP → DOWN</p>
+<div class="value red" id="bearRev">--%</div>
+</div>
+<div>
+<p class="muted">DOWN → UP</p>
+<div class="value green" id="bullRev">--%</div>
+</div>
+</div>
+<p class="muted">Reversal probability is separate from settlement probability.</p>
+</div>
+
+<div class="card">
+<h2>MULTI-TIMEFRAME ANALYSIS</h2>
+<div>15 SECOND: <span id="s15">WAITING</span></div>
+<div>1 MINUTE: <span id="m1">WAITING</span></div>
+<div>5 MINUTE: <span id="m5">WAITING</span></div>
+<div>15 MINUTE: <span id="m15">WAITING</span></div>
+<p class="muted">15-minute trend is primary. Lower timeframes help identify early reversals and entries.</p>
+</div>
+
+<div class="card">
+<h2>ORDER FLOW</h2>
+<p>Order book imbalance: <span id="imbalance">--</span></p>
+<p>Buy/Sell tape delta: <span id="delta">--</span></p>
+<p>Volume confirmation: <span id="volume">--</span></p>
+</div>
+
+<div class="card">
+<h2>TRADE SIGNAL</h2>
+<div class="value yellow" id="signal">WAITING FOR DATA</div>
+<p class="muted" id="reason">No trading signal until live feeds are connected.</p>
+</div>
+
+<div class="card">
+<h2>PAPER TRADING</h2>
+<p>Mode: <span class="green">SIMULATION ONLY</span></p>
+<p>Paper balance: --</p>
+<p>Win rate: --</p>
+<p>Total simulated trades: --</p>
+</div>
+
+<div class="card full">
+<h2>SYSTEM RULES</h2>
+<ul>
+<li>15-minute primary trading window.</li>
+<li>Use 1m and 5m for entry confirmation.</li>
+<li>Monitor 15-second movements for early warnings.</li>
+<li>Calculate reversal probabilities separately.</li>
+<li>Require evidence before issuing a signal.</li>
+<li>No real-money orders.</li>
+</ul>
+</div>
+
+<p class="muted">BTC COMMAND CENTER | VERSION 1.0</p>
+
+</body>
+</html>
