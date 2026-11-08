@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -229,7 +229,7 @@ function connectCoinbase() {
 }
 function connectBinance() {
   const binanceSocket = new WebSocket(
-    "wss://stream.binance.com:9443/ws/btcusdt@trade"
+    "wss://stream.binance.US:9443/ws/btcusdt@trade"
   );
 
   binanceSocket.onmessage = (event) => {
