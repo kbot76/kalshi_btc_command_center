@@ -119,5 +119,137 @@ button{
 
 <p class="muted">BTC COMMAND CENTER | VERSION 1.0</p>
 
+<script>
+const $ = id => document.getElementById(id);
+
+let socket;
+let lastTrade = 0;
+let buyVolume = 0;
+let sellVolume = 0;
+let lastReset = Date.now();
+
+function set(id, value) {
+  const el = $(id);
+  if (el) el.textContent = value;
+}
+
+function connectBinance() {
+  set("status", "CONNECTING TO BINANCE");
+
+  const streams = [
+    "btcusdt@trade",
+    "btcusdt@depth20@100ms",
+    "btcusdt@kline_1m",
+    "btcusdt@kline_5m",
+    "btcusdt@kline_15m"
+  ].join("/");
+
+  socket = new WebSocket(
+    "wss://stream.binance.com:9443/stream?streams=" + streams
+  );
+
+  socket.onopen = () => {
+    set("status", "BINANCE LIVE");
+    const card = $("status").parentElement;
+    const labels = card.querySelectorAll("p");
+    if (labels[0]) labels[0].textContent =
+      "Live Binance connection: Connected";
+  };
+
+  socket.onmessage = event => {
+    const msg = JSON.parse(event.data);
+    const d = msg.data;
+    const stream = msg.stream;
+
+    if (stream.includes("@trade")) {
+      const price = Number(d.p);
+      const qty = Number(d.q);
+
+      set("price", "$" + price.toLocaleString(
+        "en-US", {minimumFractionDigits: 2}
+      ));
+
+      lastTrade = Date.now();
+
+      if (d.m) sellVolume += qty;
+      else buyVolume += qty;
+
+      if (Date.now() - lastReset >= 60000) {
+        buyVolume = 0;
+        sellVolume = 0;
+        lastReset = Date.now();
+      }
+
+      const total = buyVolume + sellVolume;
+      if (total > 0) {
+        const delta = (buyVolume - sellVolume) / total;
+        set("delta", (delta * 100).toFixed(1) + "%");
+      }
+
+      set("s15", "LIVE");
+    }
+
+    if (stream.includes("@depth20")) {
+      const bids = d.bids.reduce(
+        (sum, x) => sum + Number(x[1]), 0
+      );
+      const asks = d.asks.reduce(
+        (sum, x) => sum + Number(x[1]), 0
+      );
+
+      const total = bids + asks;
+      if (total > 0) {
+        const imbalance = (bids - asks) / total;
+        set("imbalance",
+          (imbalance * 100).toFixed(1) + "%"
+        );
+      }
+    }
+
+    if (stream.includes("@kline_")) {
+      const k = d.k;
+      const volume = Number(k.v);
+      const tf = k.i;
+
+      if (tf === "1m") set("m1", "LIVE");
+      if (tf === "5m") set("m5", "LIVE");
+      if (tf === "15m") {
+        set("m15", "LIVE");
+        set("volume", volume.toFixed(4) + " BTC");
+      }
+    }
+  };
+
+  socket.onerror = () => {
+    set("status", "CONNECTION ERROR");
+  };
+
+  socket.onclose = () => {
+    set("status", "RECONNECTING");
+    setTimeout(connectBinance, 5000);
+  };
+}
+
+function updateCountdown() {
+  const now = Date.now();
+  const remaining = 900000 - (now % 900000);
+  const minutes = Math.floor(remaining / 60000);
+  const seconds = Math.floor((remaining % 60000) / 1000);
+
+  set("countdown",
+    String(minutes).padStart(2, "0") + ":" +
+    String(seconds).padStart(2, "0")
+  );
+
+  if (lastTrade && now - lastTrade > 15000) {
+    set("s15", "NO RECENT TRADE");
+  }
+}
+
+updateCountdown();
+setInterval(updateCountdown, 1000);
+connectBinance();
+ </script>
+ 
 </body>
 </html>
