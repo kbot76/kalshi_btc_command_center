@@ -227,7 +227,30 @@ function connectCoinbase() {
     setTimeout(connectCoinbase, 5000);
   };
 }
+function connectBinance() {
+  const binanceSocket = new WebSocket(
+    "wss://stream.binance.com:9443/ws/btcusdt@trade"
+  );
 
+  binanceSocket.onmessage = (event) => {
+    const trade = JSON.parse(event.data);
+    const price = Number(trade.p);
+
+    if (Number.isFinite(price)) {
+      set(
+        "binancePrice",
+        "$" + price.toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })
+      );
+    }
+  };
+
+  binanceSocket.onclose = () => {
+    setTimeout(connectBinance, 5000);
+  };
+              }
 function updateCountdown() {
   const now = Date.now();
   const remaining = 900000 - (now % 900000);
@@ -247,6 +270,7 @@ function updateCountdown() {
 updateCountdown();
 setInterval(updateCountdown, 1000);
 connectCoinbase();
+ connectBinance();
  </script>
  
 </body>
